@@ -1,0 +1,29 @@
+{
+  "name": "ai-scheduler-api",
+  "module": "app.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "@types/bun": "latest",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.33.1"
+  },
+  "scripts": {
+    "dev": "bun run app.ts",
+    "lint": "bunx eslint . --ext .ts",
+    "format": "bunx prettier --write ."
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
