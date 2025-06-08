@@ -1,18 +1,24 @@
 import type { Request, Response } from 'express';
 import * as doctorRepository from '../repositories/doctorRepository';
+import { createDoctorSchema, updateDoctorSchema, doctorIdSchema } from '../schemas/doctorSchema'; // Added
+import { ZodError } from 'zod'; // Added
 
 export const createDoctor = async (req: Request, res: Response) => {
   try {
-    const doctorData = req.body;
-    // Basic validation (can be expanded with a library like Zod)
-    if (!doctorData.name || !doctorData.registration || !doctorData.expertise || !doctorData.appointmentType || doctorData.appointmentPrice === undefined) {
-      return res.status(400).json({ message: 'Missing required fields' });
+    const validationResult = createDoctorSchema.safeParse(req.body); // Changed
+    if (!validationResult.success) { // Changed
+      return res.status(400).json({ message: 'Validation failed', errors: validationResult.error.format() });
     }
+
+    const doctorData = validationResult.data; // Changed
     const doctor = await doctorRepository.createDoctor(doctorData);
     res.status(201).json(doctor);
   } catch (error) {
     console.error('Error creating doctor:', error);
-    // Check for unique constraint violation (e.g., duplicate registration)
+    if (error instanceof ZodError) { // Should not happen if safeParse is used correctly above
+         return res.status(400).json({ message: 'Validation error in catch', errors: error.format() });
+    }
+    // Assuming error is PrismaError based on previous code
     if (error.code === 'P2002' && error.meta?.target?.includes('registration')) {
         return res.status(409).json({ message: 'Doctor with this registration already exists' });
     }
@@ -32,7 +38,12 @@ export const getDoctors = async (req: Request, res: Response) => {
 
 export const getDoctorById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const idValidationResult = doctorIdSchema.safeParse(req.params); // Added
+    if (!idValidationResult.success) { // Added
+      return res.status(400).json({ message: 'Invalid ID format', errors: idValidationResult.error.format() });
+    }
+    const { id } = idValidationResult.data; // Changed
+
     const doctor = await doctorRepository.getDoctorById(id);
     if (!doctor) {
       return res.status(404).json({ message: 'Doctor not found' });
@@ -46,8 +57,22 @@ export const getDoctorById = async (req: Request, res: Response) => {
 
 export const updateDoctor = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const doctorData = req.body;
+    const idValidationResult = doctorIdSchema.safeParse(req.params); // Added
+    if (!idValidationResult.success) { // Added
+      return res.status(400).json({ message: 'Invalid ID format', errors: idValidationResult.error.format() });
+    }
+    const { id } = idValidationResult.data; // Changed
+
+    const validationResult = updateDoctorSchema.safeParse(req.body); // Changed
+    if (!validationResult.success) { // Changed
+      return res.status(400).json({ message: 'Validation failed', errors: validationResult.error.format() });
+    }
+
+    if (Object.keys(validationResult.data).length === 0) {
+     return res.status(400).json({ message: 'No fields to update provided' });
+    }
+
+    const doctorData = validationResult.data; // Changed
     const updatedDoctor = await doctorRepository.updateDoctor(id, doctorData);
     if (!updatedDoctor) {
       return res.status(404).json({ message: 'Doctor not found' });
@@ -55,7 +80,10 @@ export const updateDoctor = async (req: Request, res: Response) => {
     res.status(200).json(updatedDoctor);
   } catch (error) {
     console.error('Error updating doctor:', error);
-    // Check for unique constraint violation (e.g., duplicate registration)
+    if (error instanceof ZodError) { // Should not happen
+         return res.status(400).json({ message: 'Validation error in catch', errors: error.format() });
+    }
+    // Assuming error is PrismaError
     if (error.code === 'P2002' && error.meta?.target?.includes('registration')) {
         return res.status(409).json({ message: 'Doctor with this registration already exists' });
     }
@@ -65,7 +93,12 @@ export const updateDoctor = async (req: Request, res: Response) => {
 
 export const deleteDoctor = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const idValidationResult = doctorIdSchema.safeParse(req.params); // Added
+    if (!idValidationResult.success) { // Added
+      return res.status(400).json({ message: 'Invalid ID format', errors: idValidationResult.error.format() });
+    }
+    const { id } = idValidationResult.data; // Changed
+
     const deletedDoctor = await doctorRepository.deleteDoctor(id);
     if (!deletedDoctor) {
       return res.status(404).json({ message: 'Doctor not found' });

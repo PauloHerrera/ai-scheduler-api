@@ -12,6 +12,13 @@ bun run index.ts
 
 This project was created using `bun init` in bun v1.2.14. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
 
+## API Documentation
+
+Comprehensive API documentation is available via Swagger UI. Once the application is running, you can access it at:
+
+`http://localhost:<PORT>/api-docs` (replace `<PORT>` with the actual port number, typically 3000).
+
+The API uses Zod for request validation, ensuring data integrity for operations like creating and updating doctors.
 
 ## Class Diagram
 
@@ -97,6 +104,8 @@ classDiagram
 
 Base path: `/api/doctors`
 
+*(Note: Request data for POST and PUT operations is validated using Zod. See the API Documentation section above for more details and access to Swagger UI for interactive testing.)*
+
 ### `POST /`
 Create a new doctor.
 - **Request Body:**
@@ -111,7 +120,7 @@ Create a new doctor.
   ```
 - **Responses:**
   - `201 Created`: Returns the created doctor object.
-  - `400 Bad Request`: If required fields are missing.
+  - `400 Bad Request`: If required fields are missing or validation fails.
   - `409 Conflict`: If a doctor with the same registration already exists.
   - `500 Internal Server Error`: If there's a server-side error.
 
@@ -127,6 +136,7 @@ Get a doctor by ID.
   - `id` (string): The ID of the doctor.
 - **Responses:**
   - `200 OK`: Returns the doctor object.
+  - `400 Bad Request`: If the ID format is invalid.
   - `404 Not Found`: If the doctor with the specified ID is not found.
   - `500 Internal Server Error`: If there's a server-side error.
 
@@ -143,6 +153,7 @@ Update a doctor by ID.
   ```
 - **Responses:**
   - `200 OK`: Returns the updated doctor object.
+  - `400 Bad Request`: If the ID format is invalid, or validation fails for the request body, or if the body is empty.
   - `404 Not Found`: If the doctor with the specified ID is not found.
   - `409 Conflict`: If updating the registration to one that already exists.
   - `500 Internal Server Error`: If there's a server-side error.
@@ -153,5 +164,6 @@ Delete a doctor by ID.
   - `id` (string): The ID of the doctor to delete.
 - **Responses:**
   - `200 OK`: Returns a success message and the deleted doctor object.
+  - `400 Bad Request`: If the ID format is invalid.
   - `404 Not Found`: If the doctor with the specified ID is not found.
   - `500 Internal Server Error`: If there's a server-side error.

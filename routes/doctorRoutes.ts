@@ -3,10 +3,201 @@ import * as doctorHandler from '../handlers/doctorHandler';
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /doctors:
+ *   post:
+ *     tags:
+ *       - Doctors
+ *     summary: Create a new doctor
+ *     description: Adds a new doctor to the system.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DoctorInput'
+ *     responses:
+ *       201:
+ *         description: Doctor created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Doctor'
+ *       400:
+ *         description: Validation failed (invalid input data).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       409:
+ *         description: Conflict - Doctor with this registration already exists.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error.
+ */
 router.post('/', doctorHandler.createDoctor);
+
+/**
+ * @openapi
+ * /doctors:
+ *   get:
+ *     tags:
+ *       - Doctors
+ *     summary: Retrieve all doctors
+ *     description: Returns a list of all doctors in the system.
+ *     responses:
+ *       200:
+ *         description: A list of doctors.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Doctor'
+ *       500:
+ *         description: Internal server error.
+ */
 router.get('/', doctorHandler.getDoctors);
+
+/**
+ * @openapi
+ * /doctors/{id}:
+ *   get:
+ *     tags:
+ *       - Doctors
+ *     summary: Retrieve a doctor by ID
+ *     description: Returns a single doctor based on their unique ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the doctor to retrieve.
+ *     responses:
+ *       200:
+ *         description: The requested doctor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Doctor'
+ *       400:
+ *         description: Invalid ID format.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Doctor not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error.
+ */
 router.get('/:id', doctorHandler.getDoctorById);
+
+/**
+ * @openapi
+ * /doctors/{id}:
+ *   put:
+ *     tags:
+ *       - Doctors
+ *     summary: Update an existing doctor
+ *     description: Updates the details of an existing doctor by their ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the doctor to update.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/DoctorInput' # Can also be a partial schema if desired
+ *     responses:
+ *       200:
+ *         description: Doctor updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Doctor'
+ *       400:
+ *         description: Validation failed or invalid ID format.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Doctor not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       409:
+ *         description: Conflict - Updated registration already exists.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error.
+ */
 router.put('/:id', doctorHandler.updateDoctor);
+
+/**
+ * @openapi
+ * /doctors/{id}:
+ *   delete:
+ *     tags:
+ *       - Doctors
+ *     summary: Delete a doctor by ID
+ *     description: Removes a doctor from the system by their unique ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ID of the doctor to delete.
+ *     responses:
+ *       200:
+ *         description: Doctor deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 doctor:
+ *                   $ref: '#/components/schemas/Doctor'
+ *       400:
+ *         description: Invalid ID format.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Doctor not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error.
+ */
 router.delete('/:id', doctorHandler.deleteDoctor);
 
 export default router;
