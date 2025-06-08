@@ -1,29 +1,26 @@
 {
   "name": "ai-scheduler-api",
-  "module": "app.ts",
+  "module": "index.ts",
   "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@eslint/js": "^9.28.0",
-    "@types/bun": "latest",
-    "@typescript-eslint/eslint-plugin": "^8.33.1",
-    "@typescript-eslint/parser": "^8.33.1",
-    "eslint": "^9.28.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.4.1",
-    "globals": "^16.2.0",
-    "prettier": "^3.5.3",
-    "typescript-eslint": "^8.33.1"
-  },
   "scripts": {
-    "dev": "bun run app.ts",
-    "lint": "bunx eslint . --ext .ts",
-    "format": "bunx prettier --write ."
+    "start": "bun index.ts",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^29.5.12",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
+    "prisma": "^5.13.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.1.2"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.0.0"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "@prisma/client": "^6.9.0",
+    "express": "^4.19.2"
   }
 }

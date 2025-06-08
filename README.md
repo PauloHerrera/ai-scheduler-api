@@ -92,3 +92,66 @@ classDiagram
 
 ### Class diagram next steps:
 1. Add medical specialty entity, the medical procedures related to that and also the preparation before the appointment.
+
+## Doctor API Endpoints
+
+Base path: `/api/doctors`
+
+### `POST /`
+Create a new doctor.
+- **Request Body:**
+  ```json
+  {
+    "name": "Dr. John Doe",
+    "registration": "CRM123456",
+    "expertise": "Cardiology",
+    "appointmentType": ["PRIVATE", "HEALTH_PLAN"],
+    "appointmentPrice": 200.50
+  }
+  ```
+- **Responses:**
+  - `201 Created`: Returns the created doctor object.
+  - `400 Bad Request`: If required fields are missing.
+  - `409 Conflict`: If a doctor with the same registration already exists.
+  - `500 Internal Server Error`: If there's a server-side error.
+
+### `GET /`
+Get all doctors.
+- **Responses:**
+  - `200 OK`: Returns an array of doctor objects.
+  - `500 Internal Server Error`: If there's a server-side error.
+
+### `GET /:id`
+Get a doctor by ID.
+- **Parameters:**
+  - `id` (string): The ID of the doctor.
+- **Responses:**
+  - `200 OK`: Returns the doctor object.
+  - `404 Not Found`: If the doctor with the specified ID is not found.
+  - `500 Internal Server Error`: If there's a server-side error.
+
+### `PUT /:id`
+Update a doctor by ID.
+- **Parameters:**
+  - `id` (string): The ID of the doctor to update.
+- **Request Body:** Partial doctor object with fields to update.
+  ```json
+  {
+    "name": "Dr. Jane Doe",
+    "appointmentPrice": 250.00
+  }
+  ```
+- **Responses:**
+  - `200 OK`: Returns the updated doctor object.
+  - `404 Not Found`: If the doctor with the specified ID is not found.
+  - `409 Conflict`: If updating the registration to one that already exists.
+  - `500 Internal Server Error`: If there's a server-side error.
+
+### `DELETE /:id`
+Delete a doctor by ID.
+- **Parameters:**
+  - `id` (string): The ID of the doctor to delete.
+- **Responses:**
+  - `200 OK`: Returns a success message and the deleted doctor object.
+  - `404 Not Found`: If the doctor with the specified ID is not found.
+  - `500 Internal Server Error`: If there's a server-side error.
