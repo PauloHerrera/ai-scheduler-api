@@ -1,4 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+// No need to import fs or js-yaml if swagger-jsdoc handles YAML loading directly from 'apis' array.
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -14,112 +15,13 @@ const options: swaggerJsdoc.Options = {
         description: 'Development server',
       },
     ],
-    components: {
-     schemas: {
-       Doctor: {
-         type: 'object',
-         required: ['name', 'registration', 'expertise', 'appointmentType', 'appointmentPrice'],
-         properties: {
-           id: {
-             type: 'string',
-             format: 'uuid',
-             description: 'The auto-generated ID of the doctor.',
-             readOnly: true,
-           },
-           name: {
-             type: 'string',
-             description: "Doctor's full name.",
-           },
-           registration: {
-             type: 'string',
-             description: "Doctor's medical registration number (e.g., CRM). Must be unique.",
-           },
-           expertise: {
-             type: 'string',
-             description: "Doctor's medical specialty or expertise.",
-           },
-           appointmentType: {
-             type: 'array',
-             items: {
-               type: 'string',
-             },
-             description: 'Types of appointments the doctor offers (e.g., PRIVATE, HEALTH_PLAN).',
-           },
-           appointmentPrice: {
-             type: 'number',
-             format: 'float',
-             description: 'Price for a private consultation.',
-           },
-           createdAt: {
-             type: 'string',
-             format: 'date-time',
-             description: 'Timestamp of when the doctor was created.',
-             readOnly: true,
-           },
-           updatedAt: {
-             type: 'string',
-             format: 'date-time',
-             description: 'Timestamp of when the doctor was last updated.',
-             readOnly: true,
-           },
-         },
-         example: {
-           id: 'd290f1ee-6c54-4b01-90e6-d701748f0851',
-           name: 'Dr. John Doe',
-           registration: 'CRM12345',
-           expertise: 'Cardiology',
-           appointmentType: ['PRIVATE', 'HEALTH_PLAN'],
-           appointmentPrice: 250.75,
-           createdAt: '2023-10-07T10:00:00.000Z',
-           updatedAt: '2023-10-07T12:30:00.000Z',
-         },
-       },
-       DoctorInput: {
-         type: 'object',
-         required: ['name', 'registration', 'expertise', 'appointmentType', 'appointmentPrice'],
-         properties: {
-           name: {
-             type: 'string',
-             description: "Doctor's full name.",
-             example: 'Dr. Jane Doe',
-           },
-           registration: {
-             type: 'string',
-             description: "Doctor's medical registration number. Must be unique.",
-             example: 'CRM54321',
-           },
-           expertise: {
-             type: 'string',
-             description: "Doctor's medical specialty.",
-             example: 'Pediatrics',
-           },
-           appointmentType: {
-             type: 'array',
-             items: {
-               type: 'string',
-             },
-             description: 'Types of appointments offered.',
-             example: ['PRIVATE'],
-           },
-           appointmentPrice: {
-             type: 'number',
-             format: 'float',
-             description: 'Price for a private consultation.',
-             example: 180.00,
-           },
-         },
-       },
-       ErrorResponse: {
-         type: 'object',
-         properties: {
-           message: { type: 'string' },
-           errors: { type: 'object' }
-         }
-       }
-     }
-    }
+    // components.schemas are now loaded from YAML files specified in 'apis'
   },
-  apis: ['./routes/*.ts', './handlers/*.ts', './schemas/*.ts'], // Paths to files containing OpenAPI definitions
+  // apis: ['./routes/*.ts', './handlers/*.ts', './schemas/*.ts'], // Old configuration
+  apis: [
+    './docs/swagger/paths/*.yaml',
+    './docs/swagger/components/*.yaml'
+  ], // Updated to point to YAML files
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
